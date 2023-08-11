@@ -19,15 +19,16 @@ use Filacare\Flysystem\Oss\OssAdapter;
 
 
 $config = [
-    'accessKeyId' => 'yourAccessKeyId',          // required
+    'accessKeyId'     => 'yourAccessKeyId',      // required
     'accessKeySecret' => 'yourAccessKeySecret',  // required
-    'endpoint' => 'yourEndpoint',                // required
-    'isCName' => false,
-    'securityToken' => null,
-    'bucket' => 'bucketName',                    // required
-    'root' => '', // Global directory prefix
-    'cdnUrl' => 'https://yourdomain.com', // setting for oss to use cdnUrl
-    'options' => [], // Custom oss request header options
+    'endpoint'        => 'yourEndpoint',         // required
+    'isCName'         => false,
+    'securityToken'   => null,
+    'bucket'          => 'bucketName',           // required
+    'root'       => '',  // Global directory prefix
+    'cdnUrl'     => '',  // https://yourdomain.com if use cdn
+    'options'    => [],  // Custom oss request header options
+    'visibility' => 'public',
 ];
 $adapter = new OssAdapter($config);
 $driver = new Filesystem($adapter);
@@ -48,40 +49,43 @@ https://help.aliyun.com/zh/oss/developer-reference/getting-started-1
 ## Laravel  
 1. Add in the disks of the config/filesystems.php configuration file
 ```php
-'oss_or_other_name' => [
-    'driver'      => 'oss',
-    'accessKeyId' => 'yourAccessKeyId',          // required
-    'accessKeySecret' => 'yourAccessKeySecret',  // required
-    'endpoint' => 'yourEndpoint',                // required
-    'isCName' => false,
-    'securityToken' => null,
-    'bucket' => 'bucketName',                    // required
-    'root' => '', // Global directory prefix
-    'cdnUrl' => 'https://yourdomain.com', // setting for oss to use cdnUrl
-    'options' => [], // Custom oss request header options
+'oss' => [
+    'driver'          => 'oss',
+    'accessKeyId'     => env('OSS_ACCESS_KEY', ''),  // required
+    'accessKeySecret' => env('OSS_SECRET_KEY', ''),  // required
+    'endpoint'        => env('OSS_ENDPOINT', ''),    // required
+    'isCName'         => env('OSS_IS_CNAME', false),
+    'securityToken'   => null,
+    'bucket'          => env('OSS_BUCKET', ''),      // required
+    'root'            => env('OSS_ROOT', ''),  // Global directory prefix 
+    'cdnUrl'          => '',  // https://yourdomain.com if use cdn
+    'options'         => [],  // Custom oss request header options
+    'visibility'      => env('OSS_VISIBILITY', 'public'),
 ],
 ```
 2. Usage in Laravel File
 ```php
 use Illuminate\Support\Facades\Storage;
-Storage::disk('oss_or_other_name')->put($path, $contents, $options = []);
+Storage::disk('oss')->put($path, $contents, $options = []);
 ```
 For details, please check https://laravel.com/docs/10.x/filesystem  
 
 ## Security Setting (Optional)  
-> Default object visibility acl is public_read, If possible, the following options can be added to the config, which is set to private by default.
+> Default object visibility acl is public(Equivalent to public_read), If possible, the following options can be added to the config, which is set to private by default.
 ```php
 'visibility' => 'private' // Optional, default visibility acl
 ```
 or higher priority:  
 ```php
 $driver->writeStream(string $path, $contents, ['visibility' => 'private']);
-Storage::disk('oss_or_other_name')->put($path, $contents, 'private');
+Storage::disk('oss')->put($path, $contents, 'private');
 ```
 
 ## SpatieMediaLibrary
 If the default policy is private and you want SpatieMediaLibrary to default to public_read, please add it to remote.extra_headers in the config/media-library.php file.
-
+```bash
+php artisan vendor:publish --provider="Spatie\MediaLibrary\MediaLibraryServiceProvider" --tag="config"
+```
 ```php
 'visibility' => 'public',
 ```
