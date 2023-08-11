@@ -1,0 +1,37 @@
+{
+    "name": "filacare/flysystem-oss",
+    "description": "OSS filesystem adapter for Flysystem.",
+    "keywords": ["laravel", "aliyun", "oss", "flysystem", "filesystem", "storage", "file", "files"],
+    "type": "library",
+    "autoload": {
+        "psr-4": {
+            "Filacare\\Flysystem\\Oss\\": ""
+        }
+    },
+    "require": {
+        "php": "^8.0.2",
+        "league/flysystem": "^3.10.0",
+        "aliyuncs/oss-sdk-php": "^2.4"
+    },
+    "conflict": {
+        "guzzlehttp/ringphp": "<1.1.1",
+        "guzzlehttp/guzzle": "<7.0"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "filacare",
+            "email": "git@filacare.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Filacare\\Flysystem\\Oss\\OssStorageServiceProvider"
+            ]
+        }
+    },
+    "require-dev": {
+        "laravel/framework": "^10.18"
+    }
+}
