@@ -1,6 +1,6 @@
 {
     "name": "filacare/flysystem-oss",
-    "description": "OSS filesystem adapter for Flysystem.",
+    "description": "Aliyun OSS adapter based on flysystem, Support Laravel 9|10",
     "keywords": ["laravel", "aliyun", "oss", "flysystem", "filesystem", "storage", "file", "files"],
     "type": "library",
     "autoload": {
