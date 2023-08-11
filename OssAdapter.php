@@ -76,7 +76,9 @@ class OssAdapter implements FilesystemAdapter
         $this->cdnUrl = $config['cdnUrl'] ?? null;
 
         $this->prefixer = new PathPrefixer($config['root'] ?? '');
-        $this->visibility = new PortableVisibilityConverter();
+        $this->visibility = new PortableVisibilityConverter(
+            $config['visibility'] ?? Visibility::PUBLIC
+        );
 
         $this->checkEndpoint();
     }
@@ -360,7 +362,10 @@ class OssAdapter implements FilesystemAdapter
     private function createOptionsFromConfig(Config $config): array
     {
         // ['x-oss-object-acl', 'visibility']
-        $visibility = (string) $config->get(Config::OPTION_VISIBILITY, Visibility::PRIVATE);
+        $visibility = (string) $config->get(
+            Config::OPTION_VISIBILITY,
+            $this->visibility->defaultForDirectories()
+        );
 
         $options = [OssClient::OSS_HEADERS => [
             ...$this->options,
