@@ -17,7 +17,6 @@ composer require filacare/flysystem-oss
 use League\Flysystem\Filesystem;
 use Filacare\Flysystem\Oss\OssAdapter;
 
-
 $config = [
     'accessKeyId'     => 'yourAccessKeyId',      // required
     'accessKeySecret' => 'yourAccessKeySecret',  // required
