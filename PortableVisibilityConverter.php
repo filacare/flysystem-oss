@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Filacare\Flysystem\Oss;
 
 use League\Flysystem\Visibility;
+use Filacare\Flysystem\Oss\Contracts\VisibilityConverter;
 
 class PortableVisibilityConverter implements VisibilityConverter
 {

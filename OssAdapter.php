@@ -12,23 +12,24 @@
 
 namespace Filacare\Flysystem\Oss;
 
-use League\Flysystem\Config;
-use League\Flysystem\DirectoryAttributes;
-use League\Flysystem\PathPrefixer;
-use League\Flysystem\Visibility;
-use OSS\Core\OssException;
 use OSS\OssClient;
+use OSS\Core\OssException;
+use League\Flysystem\Config;
+use League\Flysystem\Visibility;
+use League\Flysystem\PathPrefixer;
 use League\Flysystem\FileAttributes;
-use League\Flysystem\FilesystemAdapter;
 use League\Flysystem\UnableToCopyFile;
-use League\Flysystem\UnableToCreateDirectory;
-use League\Flysystem\UnableToDeleteDirectory;
-use League\Flysystem\UnableToDeleteFile;
 use League\Flysystem\UnableToMoveFile;
 use League\Flysystem\UnableToReadFile;
-use League\Flysystem\UnableToRetrieveMetadata;
-use League\Flysystem\UnableToSetVisibility;
+use League\Flysystem\FilesystemAdapter;
 use League\Flysystem\UnableToWriteFile;
+use League\Flysystem\UnableToDeleteFile;
+use League\Flysystem\DirectoryAttributes;
+use League\Flysystem\UnableToSetVisibility;
+use League\Flysystem\UnableToCreateDirectory;
+use League\Flysystem\UnableToDeleteDirectory;
+use League\Flysystem\UnableToRetrieveMetadata;
+use Filacare\Flysystem\Oss\Contracts\VisibilityConverter;
 
 /**
  * Class OssAdapter.
@@ -85,22 +86,18 @@ class OssAdapter implements FilesystemAdapter
 
     public function fileExists(string $path): bool
     {
-        $path = $this->prefixer->prefixPath($path);
-
-        try {
-            return $this->client->doesObjectExist($this->bucket, $path);
-        } catch (OssException $exception) {
-            return false;
-        }
+        return $this->client->doesObjectExist(
+            $this->bucket,
+            $this->prefixer->prefixPath($path)
+        );
     }
 
     public function directoryExists(string $path): bool
     {
-        try {
-            return $this->client->doesObjectExist($this->bucket, $this->prefixer->prefixDirectoryPath($path));
-        } catch (OssException $exception) {
-            return false;
-        }
+        return $this->client->doesObjectExist(
+            $this->bucket, 
+            $this->prefixer->prefixDirectoryPath($path)
+        );
     }
 
     public function write(string $path, string $contents, Config $config): void
@@ -368,8 +365,8 @@ class OssAdapter implements FilesystemAdapter
         );
 
         $options = [OssClient::OSS_HEADERS => [
-            ...$this->options,
             OssClient::OSS_OBJECT_ACL => $this->visibility->visibilityToAcl($visibility),
+            ...$this->options,
         ]];
 
         return $options;
@@ -416,7 +413,7 @@ class OssAdapter implements FilesystemAdapter
     /**
      * normalize Host.
      */
-    protected function normalizeHost(): string
+    private function normalizeHost(): string
     {
         if ($this->isCName) {
             $domain = $this->endpoint;
@@ -436,7 +433,7 @@ class OssAdapter implements FilesystemAdapter
     /**
      * Check the endpoint to see if SSL can be used.
      */
-    protected function checkEndpoint()
+    private function checkEndpoint()
     {
         if (0 === strpos($this->endpoint, 'http://')) {
             $this->endpoint = substr($this->endpoint, strlen('http://'));
@@ -608,7 +605,7 @@ class OssAdapter implements FilesystemAdapter
      *
      * @return string
      */
-    public function gmt_iso8601($time)
+    private function gmt_iso8601($time)
     {
         // fix bug https://connect.console.aliyun.com/connect/detail/162632
         return (new \DateTime('now', new \DateTimeZone('UTC')))->setTimestamp($time)->format('Y-m-d\TH:i:s\Z');

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Filacare\Flysystem\Oss;
+namespace Filacare\Flysystem\Oss\Contracts;
 
 interface VisibilityConverter
 {

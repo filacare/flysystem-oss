@@ -1,7 +1,7 @@
 {
     "name": "filacare/flysystem-oss",
-    "description": "Aliyun OSS adapter based on flysystem, Support Laravel 9|10",
-    "keywords": ["laravel", "aliyun", "oss", "flysystem", "filesystem", "storage", "file", "files"],
+    "description": "Aliyun OSS adapter based on flysystem, Support client side encryption, Compatible Laravel 9|10",
+    "keywords": ["oss", "laravel", "encryption", "flysystem", "cloud", "storage", "filesystem", "aliyun"],
     "type": "library",
     "autoload": {
         "psr-4": {
@@ -10,6 +10,7 @@
     },
     "require": {
         "php": "^8.0.2",
+        "psr/log": "^1.1 || ^2.0 || ^3.0",
         "league/flysystem": "^3.10.0",
         "aliyuncs/oss-sdk-php": "^2.4"
     },

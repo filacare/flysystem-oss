@@ -5,7 +5,11 @@ Flysystem for Aliyun oss, support Laravel 9/10
 - Object ACL
 - Custom Aliyun options
 - OSS directly and verify
-- Compatible with Laravel  
+- Compatible with Laravel 
+- Client side encryption
+
+## Require
+- PHP 8.0.2+
 
 ## Install
 ```bash
@@ -24,10 +28,11 @@ $config = [
     'isCName'         => false,
     'securityToken'   => null,
     'bucket'          => 'bucketName',           // required
-    'root'       => '',  // Global directory prefix
-    'cdnUrl'     => '',  // https://yourdomain.com if use cdn
-    'options'    => [],  // Custom oss request header options
-    'visibility' => 'public',
+    'root'            => '',  // Global directory prefix
+    'cdnUrl'          => '',  // https://yourdomain.com if use cdn
+    'options'         => [],  // Custom oss request header options
+    'visibility'      => 'public',
+    'encryptionKey'   => ''  // Must be 32 characters or ''
 ];
 $adapter = new OssAdapter($config);
 $driver = new Filesystem($adapter);
@@ -60,6 +65,7 @@ https://help.aliyun.com/zh/oss/developer-reference/getting-started-1
     'cdnUrl'          => '',  // https://yourdomain.com if use cdn
     'options'         => [],  // Custom oss request header options
     'visibility'      => env('OSS_VISIBILITY', 'public'),
+    'encryptionKey'   => '' // Must be 32 characters or ''
 ],
 ```
 2. Usage in Laravel File
@@ -70,7 +76,7 @@ Storage::disk('oss')->put($path, $contents, $options = []);
 For details, please check https://laravel.com/docs/10.x/filesystem  
 
 ## Security Setting (Optional)  
-> Default object visibility acl is public(Equivalent to public_read), If possible, the following options can be added to the config, which is set to private by default.
+> Default object visibility acl is public(Equivalent to public_read), a default visibility setting can be added, this works without passing any visibility options.
 ```php
 'visibility' => 'private' // Optional, default visibility acl
 ```
@@ -78,6 +84,12 @@ or higher priority:
 ```php
 $driver->writeStream(string $path, $contents, ['visibility' => 'private']);
 Storage::disk('oss')->put($path, $contents, 'private');
+```
+Override option, the above settings will be invalid.
+```php
+'options' => [
+    'x-oss-object-acl' => 'private' // public or private
+]
 ```
 
 ## SpatieMediaLibrary
@@ -87,6 +99,15 @@ php artisan vendor:publish --provider="Spatie\MediaLibrary\MediaLibraryServicePr
 ```
 ```php
 'visibility' => 'public',
+```
+
+## Client side encryption
+Libsodium Stream encryption. Implemented using generators, high performance.  
+Upload automatic encryption, download automatic decryption.  
+> EncryptionKey and chunkSize cannot be changed after use, otherwise they cannot be decrypted. Please decrypt the storage before modifying or keep this option in mind.  
+```php
+'encryptionKey'   => '', // Must be 32 characters or ''
+'chunkSize'       => '', // Default is 4096
 ```
 
 ## Fork
