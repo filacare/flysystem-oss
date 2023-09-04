@@ -74,7 +74,7 @@ class OssAdapter implements FilesystemAdapter
         $this->client = new OssClient(...array_values($ossConfig));
         $this->bucket = $config['bucket'];
         $this->options = $config['options'] ?? [];
-        $this->cdnUrl = $config['cdnUrl'] ?: null;
+        $this->cdnUrl = $config['cdnUrl'] ?? null;
 
         $this->prefixer = new PathPrefixer($config['root'] ?? '');
         $this->visibility = new PortableVisibilityConverter(
@@ -328,7 +328,7 @@ class OssAdapter implements FilesystemAdapter
     {
         $path = $this->prefixer->prefixPath($path);
 
-        if (!is_null($this->cdnUrl)) {
+        if ($this->cdnUrl) {
             return rtrim($this->cdnUrl, '/') . '/' . ltrim($path, '/');
         }
 
