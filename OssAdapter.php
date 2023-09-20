@@ -326,6 +326,11 @@ class OssAdapter implements FilesystemAdapter
      */
     public function getUrl(string $path): string
     {
+        $path = str_replace(
+            array('+'),
+            array('%2B'),
+            $path
+        );
         $path = $this->prefixer->prefixPath($path);
 
         if ($this->cdnUrl) {
